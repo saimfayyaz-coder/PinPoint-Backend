@@ -1,24 +1,25 @@
 import dotenv from "dotenv";
-
 import app from "./src/app.js";
 import connectDB from "./src/config/db.js";
 
 dotenv.config();
 
-const PORT = process.env.PORT || 5000;
+let isConnected = false;
 
-const startServer = async () => {
+export default async function handler(req, res) {
   try {
-    await connectDB();
+    if (!isConnected) {
+      await connectDB();
+      isConnected = true;
+    }
 
-    app.listen(PORT, () => {
-      console.log(`Server running on port ${PORT}`);
-    });
+    return app(req, res);
   } catch (error) {
-    console.error("Failed to start server:", error);
+    console.error("Failed to connect to database:", error);
 
-    process.exit(1);
+    return res.status(500).json({
+      success: false,
+      message: "Internal server error",
+    });
   }
-};
-
-startServer();
+}
