@@ -6,6 +6,7 @@ import {
   refreshAccessToken,
   logout,
   getCurrentUser,
+  registerDeviceToken,
 } from "../controllers/auth.controller.js";
 
 import { protect } from "../middlewares/auth.middleware.js";
@@ -21,5 +22,7 @@ router.post("/refresh-token", refreshAccessToken);
 router.post("/logout", logout);
 
 router.get("/me", protect, getCurrentUser);
+
+router.post("/me/device-token", protect, registerDeviceToken);
 
 export default router;

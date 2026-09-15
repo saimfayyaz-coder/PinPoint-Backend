@@ -234,3 +234,33 @@ export const getCurrentUser = async (req, res) => {
     }),
   );
 };
+
+export const registerDeviceToken = async (req, res) => {
+  try {
+    const { token } = req.body;
+    console.log("TOKEN RECEIVED", token);
+
+    if (!token) {
+      return res
+        .status(400)
+        .json(new ApiResponse(false, "Device token is required"));
+    }
+
+    const user = await User.findById(req.user._id);
+
+    if (!user) {
+      return res.status(404).json(new ApiResponse(false, "User not found"));
+    }
+
+    user.deviceToken = token;
+    await user.save();
+
+    return res
+      .status(200)
+      .json(new ApiResponse(true, "Device token registered successfully"));
+  } catch (error) {
+    return res
+      .status(500)
+      .json(new ApiResponse(false, "Failed to register device token"));
+  }
+};
